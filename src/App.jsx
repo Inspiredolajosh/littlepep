@@ -62,7 +62,7 @@ function App() {
     }
   };
   
-  const connectWallet = () => {
+   const connectWallet = () => {
     if (isConnected) {
       disconnectWallet();
     } else {
@@ -111,7 +111,14 @@ function App() {
       // Check if the current network is BSC testnet (chainId 97)
       const network = await provider.getNetwork();
       if (network.chainId !== 97) {
-        window.alert("Bsc Network Only! use Switch Network button above.");
+        window.alert("Bsc Network Only! Use the Switch Network button above.");
+        return;
+      }
+  
+      // Check if the user has already claimed tokens
+      const hasAlreadyClaimed = await contract.hasClaimed(defaultAccount);
+      if (hasAlreadyClaimed) {
+        window.alert("You have already claimed your tokens");
         return;
       }
   
@@ -125,7 +132,7 @@ function App() {
       const transaction = await contractWithSigner.claimTokens(referrerAddress, transactionParameters);
       await transaction.wait();
   
-      window.alert("Airdrop claimed successfully!");
+      setNotification("Airdrop claimed successfully!");
     } catch (error) {
       console.error(error);
       window.alert("Failed to claim airdrop, please check your connection.");
@@ -177,6 +184,7 @@ function App() {
         <div className="intro">
           <div className="container">
             <p>You slept on my Dad, don't sleep on me.</p>
+            
             <img src={pepe} alt="pepe" />
 
             <h1>Little Pepe</h1>
