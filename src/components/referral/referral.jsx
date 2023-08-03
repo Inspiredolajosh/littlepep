@@ -2,7 +2,7 @@ import React from "react";
 import { ethers } from "ethers";
 
 const ReferralLinkComponent = ({ isConnected, defaultAccount, claimTokens }) => {
-  const domainName = "http://127.0.0.1:5173";
+  const domainName = "https://littlepepe.netlify.app";
   const referralLink = isConnected ? `${domainName}/?ref=${defaultAccount}` : "";
 
   const handleCopyButtonClick = async () => {
