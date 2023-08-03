@@ -18,11 +18,9 @@ function App() {
   const [defaultAccount, setDefaultAccount] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [networkChainId, setNetworkChainId] = useState(null);
 
-  // Function to store the connected account in the browser storage
-  const storeConnectedAccount = (accountName) => {
-    localStorage.setItem("connectedAccount", accountName);
-  };
+
 
   // Function to retrieve the connected account from the browser storage
   const getConnectedAccountFromStorage = () => {
@@ -37,7 +35,17 @@ function App() {
       setIsConnected(true);
     }
     logContractConnection();
+    updateNetworkChainId();
   }, []);
+
+  const updateNetworkChainId = async () => {
+    try {
+      const network = await provider.getNetwork();
+      setNetworkChainId(network.chainId);
+    } catch (error) {
+      console.error("Failed to get network information:", error);
+    }
+  };
 
   const logContractConnection = async () => {
     if (window.ethereum && window.ethereum.selectedAddress) {
@@ -60,14 +68,26 @@ function App() {
     } else {
       if (window.ethereum) {
         window.ethereum
-          .request({ method: "eth_requestAccounts" })
-          .then((result) => {
-            accountChanged(result[0]);
-            storeConnectedAccount(result[0]); // Store the connected account in localStorage
+          .request({ method: "eth_chainId" })
+          .then((chainId) => {
+            if (chainId === '0x61') {
+              window.ethereum
+                .request({ method: "eth_requestAccounts" })
+                .then((result) => {
+                  accountChanged(result[0]);
+              
+                })
+                .catch((error) => {
+                  console.error(error);
+                  setErrorMessage("Failed to connect to the wallet.");
+                });
+            } else {
+              setErrorMessage("Please switch to the BSC testnet to connect.");
+            }
           })
           .catch((error) => {
             console.error(error);
-            setErrorMessage("Failed to connect to the wallet.");
+            setErrorMessage("Failed to get network information.");
           });
       } else {
         setErrorMessage(
@@ -76,6 +96,7 @@ function App() {
       }
     }
   };
+  
 
   const disconnectWallet = () => {
     setDefaultAccount(null);
@@ -99,15 +120,14 @@ function App() {
   
       // Check if referrerAddress is a valid Ethereum address
       if (!ethers.utils.isAddress(referrerAddress)) {
-        setErrorMessage("Invalid Ethereum address or ENS name.");
+        window.alert("Invalid Ethereum address or ENS name.");
         return;
       }
   
+      // Check if the current network is BSC testnet (chainId 97)
       const network = await provider.getNetwork();
-      const allowedNetworks = [56, 97]; // Array of allowed network chainIds
-  
-      if (!allowedNetworks.includes(network.chainId)) {
-        setErrorMessage("Please switch to the Binance mainnet to claim the airdrop.");
+      if (network.chainId !== 97) {
+        window.alert("Bsc Network Only! use Switch Network button above.");
         return;
       }
   
@@ -121,12 +141,14 @@ function App() {
       const transaction = await contractWithSigner.claimTokens(referrerAddress, transactionParameters);
       await transaction.wait();
   
-      setNotification("Airdrop claimed successfully!");
+      window.alert("Airdrop claimed successfully!");
     } catch (error) {
       console.error(error);
-      setErrorMessage("Failed to claim airdrop, please check your connection.");
+      window.alert("Failed to claim airdrop, please check your connection.");
     }
   };
+  
+  
 
 
   useEffect(() => {
@@ -142,7 +164,7 @@ function App() {
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x38' }],
+        params: [{ chainId: '0x61' }],
       });
       window.location.reload(); 
     } catch (error) {
@@ -159,11 +181,13 @@ function App() {
   return (
     <div className="app">
       <div className="container">
-        <NavBar
+      <NavBar
           isConnected={isConnected}
           connectWallet={connectWallet}
           defaultAccount={defaultAccount}
           disconnectWallet={disconnectWallet}
+          switchNetwork={switchNetwork}
+          isBscNetwork={networkChainId === '0x61'}
         />
 
         <div className="intro">
