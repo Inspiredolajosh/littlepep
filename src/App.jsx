@@ -68,35 +68,19 @@ function App() {
     } else {
       if (window.ethereum) {
         window.ethereum
-          .request({ method: "eth_chainId" })
-          .then((chainId) => {
-            if (chainId === '0x61') {
-              window.ethereum
-                .request({ method: "eth_requestAccounts" })
-                .then((result) => {
-                  accountChanged(result[0]);
-              
-                })
-                .catch((error) => {
-                  console.error(error);
-                  setErrorMessage("Failed to connect to the wallet.");
-                });
-            } else {
-              setErrorMessage("Please switch to the BSC testnet to connect.");
-            }
+          .request({ method: "eth_requestAccounts" })
+          .then((result) => {
+            accountChanged(result[0]);
           })
           .catch((error) => {
             console.error(error);
-            setErrorMessage("Failed to get network information.");
+            setErrorMessage("Failed to connect to the wallet.");
           });
       } else {
-        setErrorMessage(
-          "Please install Metamask or another Ethereum wallet provider to connect."
-        );
+        setErrorMessage("Please install Metamask or another Ethereum wallet provider to connect.");
       }
     }
   };
-  
 
   const disconnectWallet = () => {
     setDefaultAccount(null);
