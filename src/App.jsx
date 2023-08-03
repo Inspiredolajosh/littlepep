@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "./components/navbar/NavBar";
 import "./App.scss";
-
 import pepe from "../src/assets/img/pepe.png";
 import Form from "./components/form/Form";
-import useWalletStore from "./components/Store";
 import ReferralLinkComponent from "./components/referral/referral";
+import { ethers } from 'ethers';
+import abi from './littlepepe.json';
+
+
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+const signer = provider.getSigner();
+const contractAddress = '0x04d5b6cBC301E1148c12B509ACb4730c2A5D1D41'; 
+const contract = new ethers.Contract(contractAddress, abi, signer);
 
 function App() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [defaultAccount, setDefaultAccount] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   // Function to store the connected account in the browser storage
   const storeConnectedAccount = (accountName) => {
@@ -29,8 +36,24 @@ function App() {
       setDefaultAccount(storedAccount);
       setIsConnected(true);
     }
+    logContractConnection();
   }, []);
 
+  const logContractConnection = async () => {
+    if (window.ethereum && window.ethereum.selectedAddress) {
+      console.log("Contract connected");
+      console.log("Connected contract address:", contractAddress);
+      try {
+        const network = await contract.signer.provider.getNetwork();
+        console.log("Connected network chainId:", network.chainId);
+      } catch (error) {
+        console.error("Failed to get network information:", error);
+      }
+    } else {
+      console.log("Contract not connected");
+    }
+  };
+  
   const connectWallet = () => {
     if (isConnected) {
       disconnectWallet();
@@ -66,6 +89,73 @@ function App() {
     setIsConnected(true);
   };
 
+  const claimTokens = async (referrerAddress) => {
+    try {
+      // Check if referrerAddress is an ENS name
+      if (typeof referrerAddress === 'string' && referrerAddress.includes('.eth')) {
+        const resolvedAddress = await provider.resolveName(referrerAddress);
+        referrerAddress = resolvedAddress;
+      }
+  
+      // Check if referrerAddress is a valid Ethereum address
+      if (!ethers.utils.isAddress(referrerAddress)) {
+        setErrorMessage("Invalid Ethereum address or ENS name.");
+        return;
+      }
+  
+      const network = await provider.getNetwork();
+      const allowedNetworks = [56, 97]; // Array of allowed network chainIds
+  
+      if (!allowedNetworks.includes(network.chainId)) {
+        setErrorMessage("Please switch to the Binance mainnet to claim the airdrop.");
+        return;
+      }
+  
+      const price = ethers.utils.parseEther("0.00035");
+      const transactionParameters = {
+        value: price,
+      };
+  
+      const signer = provider.getSigner();
+      const contractWithSigner = contract.connect(signer);
+      const transaction = await contractWithSigner.claimTokens(referrerAddress, transactionParameters);
+      await transaction.wait();
+  
+      setNotification("Airdrop claimed successfully!");
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Failed to claim airdrop, please check your connection.");
+    }
+  };
+
+
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
+  const switchNetwork = async () => {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x38' }],
+      });
+      window.location.reload(); 
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Failed to switch network. Please switch EVM Network to BSC in your wallet.");
+    }
+  };
+
+  const closeErrorMessage = () => {
+    setErrorMessage(null);
+  };
+
+
   return (
     <div className="app">
       <div className="container">
@@ -95,12 +185,16 @@ function App() {
         </div>
 
         {/* Form */}
-        <Form />
+        <Form  isConnected={isConnected} defaultAccount={defaultAccount} claimTokens={claimTokens} />
+
+        
+    
 
         <div className="referal">
           <div className="container">
             {/* Display the Referral Link */}
-            <ReferralLinkComponent isConnected={isConnected} defaultAccount={defaultAccount} />
+            <ReferralLinkComponent isConnected={isConnected} defaultAccount={defaultAccount} claimTokens={claimTokens} />
+
           </div>
         </div>
       </div>

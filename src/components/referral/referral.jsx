@@ -1,16 +1,21 @@
 import React from "react";
+import { ethers } from "ethers";
 
-const ReferralLinkComponent = ({ isConnected, defaultAccount }) => {
+const ReferralLinkComponent = ({ isConnected, defaultAccount, claimTokens }) => {
   const domainName = "http://127.0.0.1:5173";
   const referralLink = isConnected ? `${domainName}/?ref=${defaultAccount}` : "";
 
-  const handleCopyButtonClick = () => {
+  const handleCopyButtonClick = async () => {
     if (referralLink) {
-      navigator.clipboard.writeText(referralLink).then(() => {
+      try {
+        await navigator.clipboard.writeText(referralLink);
         alert("Referral link copied to clipboard!");
-      });
+      } catch (error) {
+        console.error("Failed to copy to clipboard:", error);
+      }
     }
   };
+
 
   return (
     <div className="referral">

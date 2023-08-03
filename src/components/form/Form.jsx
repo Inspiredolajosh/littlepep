@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Form.scss";
 
-const Form = () => {
+const Form = ({ isConnected, defaultAccount, claimTokens }) => {
   const [referrerAddress, setReferrerAddress] = useState("");
 
   useEffect(() => {
@@ -21,12 +21,22 @@ const Form = () => {
     setReferrerAddress(event.target.value);
   };
 
+  const handleClaimButtonClick = () => {
+    if (isConnected) {
+      // Call the claimTokens function with the appropriate referrerAddress
+      const referrerAddressToSend = referrerAddress.trim() !== "" ? referrerAddress : defaultAccount;
+      claimTokens(referrerAddressToSend);
+    } else {
+      // Handle case when user is not connected
+      console.log("User is not connected.");
+    }
+  };
+
   return (
     <form
       className="form"
       onSubmit={(e) => {
         e.preventDefault();
-        // Perform the action when the form is submitted (e.g., claim airdrop)
       }}
     >
       <div className="container">
@@ -44,8 +54,9 @@ const Form = () => {
         </div>
 
         <div className="form__group">
-          <button className="btn">Claim Airdrop</button>
+          <button className="btn" onClick={handleClaimButtonClick}>Claim Airdrop</button>
         </div>
+       
       </div>
     </form>
   );
