@@ -10,7 +10,7 @@ import abi from './littlepepe.json';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
-const contractAddress = '0x04d5b6cBC301E1148c12B509ACb4730c2A5D1D41'; 
+const contractAddress = '0x2Cc6493004553da0450F1C31360f97Ef1F00160C'; 
 const contract = new ethers.Contract(contractAddress, abi, signer);
 
 function App() {
@@ -122,7 +122,7 @@ function App() {
         return;
       }
   
-      const price = ethers.utils.parseEther("0.00035");
+      const price = ethers.utils.parseEther("0.0034");
       const transactionParameters = {
         value: price,
       };
@@ -164,9 +164,7 @@ function App() {
     }
   };
 
-  const closeErrorMessage = () => {
-    setErrorMessage(null);
-  };
+
 
 
   return (
