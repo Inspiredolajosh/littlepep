@@ -28,7 +28,7 @@ const Form = ({ isConnected, defaultAccount, claimTokens }) => {
       claimTokens(referrerAddressToSend);
     } else {
       // Handle case when user is not connected
-      console.log("User is not connected.");
+      window.alert("User is not connected.");
     }
   };
 
