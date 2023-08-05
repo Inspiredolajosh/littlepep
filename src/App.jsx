@@ -10,7 +10,7 @@ import abi from './littlepepe.json';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
-const contractAddress = '0x2Cc6493004553da0450F1C31360f97Ef1F00160C'; 
+const contractAddress = '0x530494a64f2dBDCf80382ac18B656c0A0D1B7095'; 
 const contract = new ethers.Contract(contractAddress, abi, signer);
 
 function App() {
@@ -74,10 +74,10 @@ function App() {
           })
           .catch((error) => {
             console.error(error);
-            setErrorMessage("Failed to connect to the wallet.");
+            window.alert("Failed to connect to the wallet.");
           });
       } else {
-        setErrorMessage("Please install Metamask or another Ethereum wallet provider to connect.");
+        window.alert("Please install Metamask or another Ethereum wallet provider to connect.");
       }
     }
   };
@@ -86,7 +86,7 @@ function App() {
     setDefaultAccount(null);
     setIsConnected(false);
     setErrorMessage(null);
-    localStorage.removeItem("connectedAccount"); // Remove the connected account from localStorage
+    localStorage.removeItem("connectedAccount"); 
   };
 
   const accountChanged = (accountName) => {
@@ -108,10 +108,10 @@ function App() {
         return;
       }
   
-      // Check if the current network is BSC testnet (chainId 97)
+      // Check if the current network is BSC Mainnet (chainId 56)
       const network = await provider.getNetwork();
-      if (network.chainId !== 97) {
-        window.alert("Bsc Network Only! Use the Switch Network button above.");
+      if (network.chainId !== 56) {
+        window.alert("BSC Mainnet Only! Use the Switch Network button above.");
         return;
       }
   
@@ -135,7 +135,7 @@ function App() {
       setNotification("Airdrop claimed successfully!");
     } catch (error) {
       console.error(error);
-      window.alert("Failed to claim airdrop, please check your connection.");
+      window.alert("Runtime Error!");
     }
   };
   
@@ -155,7 +155,7 @@ function App() {
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x61' }],
+        params: [{ chainId: '0x38' }], 
       });
       window.location.reload(); 
     } catch (error) {
@@ -163,6 +163,7 @@ function App() {
       setErrorMessage("Failed to switch network. Please switch EVM Network to BSC in your wallet.");
     }
   };
+  
 
 
 
