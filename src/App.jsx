@@ -134,7 +134,7 @@ function App() {
       const transaction = await contractWithSigner.claimTokens(referrerAddress, transactionParameters);
       await transaction.wait();
   
-      setNotification("Airdrop claimed successfully!");
+      window.alert("Airdrop claimed successfully!");
     } catch (error) {
       console.error(error);
       window.alert("Runtime Error!");
