@@ -106,7 +106,7 @@ function App() {
   
       // Check if referrerAddress is a valid Ethereum address
       if (!ethers.utils.isAddress(referrerAddress)) {
-        window.alert("Invalid Ethereum address or ENS name.");
+        window.alert("Invalid address or ENS name.");
         return;
       }
   
