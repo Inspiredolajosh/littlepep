@@ -23,12 +23,24 @@ const Form = ({ isConnected, defaultAccount, claimTokens }) => {
 
   const handleClaimButtonClick = () => {
     if (isConnected) {
-      // Call the claimTokens function with the appropriate referrerAddress
-      const referrerAddressToSend = referrerAddress.trim() !== "" ? referrerAddress : defaultAccount;
-      claimTokens(referrerAddressToSend);
+      // Check if connected to BSC mainnet
+      window.ethereum
+        .request({ method: "eth_chainId" })
+        .then((chainIdHex) => {
+          const chainId = parseInt(chainIdHex, 16);
+          if (chainId !== 56) {
+            window.alert("BSC Mainnet Only! Connect wallet and use the Switch Network button above.");
+          } else {
+            // Call the claimTokens function with the appropriate referrerAddress
+            const referrerAddressToSend = referrerAddress.trim() !== "" ? referrerAddress : defaultAccount;
+            claimTokens(referrerAddressToSend);
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to get chainId:", error);
+        });
     } else {
-      // Handle case when user is not connected
-      window.alert("User is not connected.");
+      window.alert("BSC Mainnet Only! Connect wallet and use the Switch Network button above.");
     }
   };
 

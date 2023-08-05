@@ -159,7 +159,7 @@ function App() {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: '0x38' }], 
       });
-      window.location.reload(); 
+      window.location.reload()
     } catch (error) {
       console.error(error);
       setErrorMessage("Failed to switch network. Please switch EVM Network to BSC in your wallet.");
