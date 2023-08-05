@@ -193,8 +193,11 @@ function App() {
                 Little PEPE is built on the BSC network and is a community-driven project.
               </p>
               <p>
-                Connect wallet, claim airdrop and refer your friends to enjoy an unending benefit of LittlePepe
-              </p>
+      Claim your 1 billion $LPEPE worth $40. <br />
+      Share your referral link and earn 100 million tokens worth $4 per referral.<br />
+      Listing in days, stay glued to our twitter page.<br />
+      Airdrop ending soon! 
+    </p>
             </div>
           </div>
         </div>
