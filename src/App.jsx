@@ -94,6 +94,8 @@ function App() {
     setIsConnected(true);
   };
 
+  
+
   const claimTokens = async (referrerAddress) => {
     try {
       // Check if referrerAddress is an ENS name
@@ -187,10 +189,12 @@ function App() {
             <img src={pepe} alt="pepe" />
 
             <h1>Little Pepe</h1>
+            <h2>Contract Address: 0x530494a64f2dBDCf80382ac18B656c0A0D1B7095</h2>
 
             <div className="intro__text">
               <p>
                 Little PEPE is built on the BSC network and is a community-driven project.
+                
               </p>
               <p>
       Claim your 1 billion $LPEPE worth $40. <br />
@@ -201,6 +205,7 @@ function App() {
             </div>
           </div>
         </div>
+
 
         {/* Form */}
         <Form  isConnected={isConnected} defaultAccount={defaultAccount} claimTokens={claimTokens} />
