@@ -2,7 +2,7 @@ import React from "react";
 import { ethers } from "ethers";
 
 const ReferralLinkComponent = ({ isConnected, defaultAccount, claimTokens }) => {
-  const domainName = "https://darttoken.netlify.app/";
+  const domainName = "https://darttoken.netlify.app";
   const referralLink = isConnected ? `${domainName}/?ref=${defaultAccount}` : "";
 
   const handleCopyButtonClick = async () => {

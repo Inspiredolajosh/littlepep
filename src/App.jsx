@@ -17,7 +17,7 @@ let contract = null;
 if (typeof window !== 'undefined' && window.ethereum) {
   provider = new ethers.providers.Web3Provider(window.ethereum);
   signer = provider.getSigner();
-  const contractAddress = '0x3b3eED253E1A20630a71508749556F6DCa15e3ba';
+  const contractAddress = '0xDe50f6f87c37565B5C8640bE1B93E4A5D5C6B767';
   contract = new ethers.Contract(contractAddress, abi, signer);
 }
 
@@ -28,9 +28,8 @@ function App() {
   const [notification, setNotification] = useState(null);
   const [networkChainId, setNetworkChainId] = useState(null);
   const [referralCount, setReferralCount] = useState(0);
-
-
-
+  const [hasClaimed, setHasClaimed] = useState(false);
+  const [totalTokensOwned, setTotalTokensOwned] = useState(ethers.BigNumber.from(0)); // Initialize as a BigNumber
 
   // Function to retrieve the connected account from the browser storage
   const getConnectedAccountFromStorage = () => {
@@ -48,23 +47,53 @@ function App() {
     updateNetworkChainId();
   }, []);
 
-useEffect(() => {
-  if (isConnected) {
-    // Fetch the referral count for the default account
-    const fetchReferralCount = async () => {
-      try {
-        const count = await contract.referralCount(defaultAccount);
-        setReferralCount(count.toNumber());
-      } catch (error) {
-        console.error("Failed to fetch referral count:", error);
+  useEffect(() => {
+    if (isConnected) {
+      // Fetch the referral count for the default account
+      const fetchReferralCount = async () => {
+        try {
+          const count = await contract.referralCount(defaultAccount);
+          setReferralCount(count.toNumber());
+        } catch (error) {
+          console.error("Failed to fetch referral count:", error);
+        }
+      };
+
+      fetchReferralCount();
+    }
+  }, [isConnected, defaultAccount]); // Added defaultAccount as a dependency
+
+  useEffect(() => {
+    const checkClaimStatus = async () => {
+      if (isConnected) {
+        try {
+          const hasClaimed = await contract.hasClaimed(defaultAccount);
+          setHasClaimed(hasClaimed);
+        } catch (error) {
+          console.error("Error checking claim status:", error);
+        }
       }
     };
 
-    fetchReferralCount();
-  }
-}, [isConnected, defaultAccount]); // Added defaultAccount as a dependency
+    checkClaimStatus();
+  }, [isConnected, defaultAccount]);
 
   
+  useEffect(() => {
+    const fetchTotalTokensOwned = async () => {
+      if (isConnected) {
+        try {
+          const totalTokens = await contract.totalTokensOwned(defaultAccount);
+          setTotalTokensOwned(totalTokens);
+        } catch (error) {
+          console.error("Error fetching total tokens owned:", error);        
+        }
+      }
+    };
+
+    fetchTotalTokensOwned();
+  }, [isConnected, defaultAccount]);
+
   const updateNetworkChainId = async () => {
     try {
       const network = await provider.getNetwork();
@@ -89,7 +118,7 @@ useEffect(() => {
     }
   };
   
-   const connectWallet = () => {
+  const connectWallet = () => {
     if (isConnected) {
       disconnectWallet();
     } else {
@@ -120,8 +149,6 @@ useEffect(() => {
     setDefaultAccount(accountName);
     setIsConnected(true);
   };
-
-  
 
   const claimTokens = async (referrerAddress) => {
     try {
@@ -168,18 +195,6 @@ useEffect(() => {
     }
   };
   
-  
-
-
-  useEffect(() => {
-    if (notification) {
-      const timer = setTimeout(() => {
-        setNotification(null);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [notification]);
-
   const switchNetwork = async () => {
     try {
       await window.ethereum.request({
@@ -193,9 +208,6 @@ useEffect(() => {
     }
   };
   
-
-
-
 
   return (
     <div className="app">
@@ -229,6 +241,8 @@ useEffect(() => {
         Total Referral: {referralCount}
       </button>
     )}
+
+
           {/* <div className="container">
             <p>You slept on my Dad, don't sleep on me.</p>
             
@@ -250,8 +264,28 @@ useEffect(() => {
     </p>
             </div>
           </div> */}
-        </div>
 
+          
+        </div>
+<br />
+{isConnected && (
+  <button
+    style={{
+      padding: '10px 20px',
+      backgroundColor: '#38d324', /* Green */
+      border: 'none',
+      color: 'white',
+      textAlign: 'center',
+      textDecoration: 'none',
+      display: 'inline-block',
+      fontSize: '16px',
+      borderRadius: '8px',
+      cursor: 'default' /* Set cursor to default to indicate non-clickable */
+    }}
+  >
+    Total Tokens Owned: {ethers.utils.formatUnits(totalTokensOwned, 18)}
+  </button>
+)}
 
         {/* Form */}
         <Form  isConnected={isConnected} defaultAccount={defaultAccount} claimTokens={claimTokens} />
@@ -260,16 +294,20 @@ useEffect(() => {
     
 
 
-
         <div className="referal">
   <div className="container">
-    {/* Display the Referral Link */}
-    <ReferralLinkComponent isConnected={isConnected} defaultAccount={defaultAccount} claimTokens={claimTokens} />
-
-  
+    {/* Conditionally render the ReferralLinkComponent */}
+    {isConnected && hasClaimed && (
+      <ReferralLinkComponent isConnected={isConnected} defaultAccount={defaultAccount} claimTokens={claimTokens} />
+    )}
+{/* Display a message if the user has not claimed tokens */}
+{isConnected && !hasClaimed && (
+  <p style={{ fontSize: '18px', color: 'white' }}>Please claim your tokens to generate the referral link.</p>
+)}
 
   </div>
 </div>
+
 
 
       </div>
