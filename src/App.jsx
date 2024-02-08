@@ -5,12 +5,13 @@ import pepe from "../src/assets/img/pepe.png";
 import Form from "./components/form/Form";
 import ReferralLinkComponent from "./components/referral/referral";
 import { ethers } from 'ethers';
-import abi from './littlepepe.json';
+import abi from './darktoken.json';
 
+// former contract 0x530494a64f2dBDCf80382ac18B656c0A0D1B7095
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
-const contractAddress = '0x530494a64f2dBDCf80382ac18B656c0A0D1B7095'; 
+const contractAddress = '0x3b3eED253E1A20630a71508749556F6DCa15e3ba'; 
 const contract = new ethers.Contract(contractAddress, abi, signer);
 
 function App() {
@@ -112,8 +113,8 @@ function App() {
   
       // Check if the current network is BSC Mainnet (chainId 56)
       const network = await provider.getNetwork();
-      if (network.chainId !== 56) {
-        window.alert("BSC Mainnet Only! Use the Switch Network button above.");
+      if (network.chainId !== 97) {
+        window.alert("BSC Testnet Only! Use the Switch Network button above.");
         return;
       }
   
@@ -157,7 +158,7 @@ function App() {
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x38' }], 
+        params: [{ chainId: '0x61' }], 
       });
       window.location.reload()
     } catch (error) {
@@ -183,7 +184,7 @@ function App() {
         />
 
         <div className="intro">
-          <div className="container">
+          {/* <div className="container">
             <p>You slept on my Dad, don't sleep on me.</p>
             
             <img src={pepe} alt="pepe" />
@@ -203,7 +204,7 @@ function App() {
       Airdrop ending soon! 
     </p>
             </div>
-          </div>
+          </div> */}
         </div>
 
 

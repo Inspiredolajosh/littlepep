@@ -28,8 +28,8 @@ const Form = ({ isConnected, defaultAccount, claimTokens }) => {
         .request({ method: "eth_chainId" })
         .then((chainIdHex) => {
           const chainId = parseInt(chainIdHex, 16);
-          if (chainId !== 56) {
-            window.alert("BSC Mainnet Only! Connect wallet and use the Switch Network button above.");
+          if (chainId !== 97) {
+            window.alert("BSC Testnet Only! Connect wallet and use the Switch Network button above.");
           } else {
             // Call the claimTokens function with the appropriate referrerAddress
             const referrerAddressToSend = referrerAddress.trim() !== "" ? referrerAddress : defaultAccount;

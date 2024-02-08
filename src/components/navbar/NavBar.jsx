@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./NavBar.scss";
-import pepe from "../../assets/img/pepe.png";
+// import pepe from "../../assets/img/pepe.png";
 
 const NavBar = ({ isConnected, connectWallet, defaultAccount, disconnectWallet, switchNetwork, isBscNetwork }) => {
 
@@ -20,7 +20,7 @@ const NavBar = ({ isConnected, connectWallet, defaultAccount, disconnectWallet, 
   return (
     <div className="nav">
       <div className="container">
-      <img src={pepe} alt="pepe" />
+      {/* <img src={pepe} alt="pepe" /> */}
         {isConnected ? (
           <>
             <button className="nav__btn">{truncateWalletAddress(defaultAccount)}</button>

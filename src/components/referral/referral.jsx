@@ -2,7 +2,7 @@ import React from "react";
 import { ethers } from "ethers";
 
 const ReferralLinkComponent = ({ isConnected, defaultAccount, claimTokens }) => {
-  const domainName = "https://littlepepe.netlify.app";
+  const domainName = "http://localhost:5173/";
   const referralLink = isConnected ? `${domainName}/?ref=${defaultAccount}` : "";
 
   const handleCopyButtonClick = async () => {
@@ -19,10 +19,10 @@ const ReferralLinkComponent = ({ isConnected, defaultAccount, claimTokens }) => 
 
   return (
     <div className="referral">
-      <div className="container">
+      {/* <div className="container">
         <input type="text" value={referralLink} placeholder="your referral link" readOnly />
         <button onClick={handleCopyButtonClick}>Copy</button>
-      </div>
+      </div> */}
     </div>
   );
 };
