@@ -9,6 +9,7 @@ lerna-debug.log*
 yarn.lock
 
 node_modules
+hedera-hardhat-example-project
 dist
 dist-ssr
 *.local
