@@ -283,7 +283,7 @@ function App() {
       cursor: 'default' /* Set cursor to default to indicate non-clickable */
     }}
   >
-    Total Tokens Owned: {ethers.utils.formatUnits(totalTokensOwned, 18)}
+    Total Tokens Owned: {ethers.utils.formatUnits(totalTokensOwned, 18)} DRT
   </button>
 )}
 
