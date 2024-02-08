@@ -19,10 +19,10 @@ const ReferralLinkComponent = ({ isConnected, defaultAccount, claimTokens }) => 
 
   return (
     <div className="referral">
-      {/* <div className="container">
+      <div className="container">
         <input type="text" value={referralLink} placeholder="your referral link" readOnly />
         <button onClick={handleCopyButtonClick}>Copy</button>
-      </div> */}
+      </div>
     </div>
   );
 };
