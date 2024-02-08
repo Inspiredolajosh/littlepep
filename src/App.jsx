@@ -27,6 +27,8 @@ function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [notification, setNotification] = useState(null);
   const [networkChainId, setNetworkChainId] = useState(null);
+  const [referralCount, setReferralCount] = useState(0);
+
 
 
 
@@ -46,6 +48,23 @@ function App() {
     updateNetworkChainId();
   }, []);
 
+useEffect(() => {
+  if (isConnected) {
+    // Fetch the referral count for the default account
+    const fetchReferralCount = async () => {
+      try {
+        const count = await contract.referralCount(defaultAccount);
+        setReferralCount(count.toNumber());
+      } catch (error) {
+        console.error("Failed to fetch referral count:", error);
+      }
+    };
+
+    fetchReferralCount();
+  }
+}, [isConnected, defaultAccount]); // Added defaultAccount as a dependency
+
+  
   const updateNetworkChainId = async () => {
     try {
       const network = await provider.getNetwork();
@@ -191,6 +210,25 @@ function App() {
         />
 
         <div className="intro">
+            {/* Display the referral count */}
+    {isConnected && (
+      <button
+        style={{
+          padding: '10px 20px',
+          backgroundColor: '#d36a24', /* Green */
+          border: 'none',
+          color: 'white',
+          textAlign: 'center',
+          textDecoration: 'none',
+          display: 'inline-block',
+          fontSize: '16px',
+          borderRadius: '8px',
+          cursor: 'default' /* Set cursor to default to indicate non-clickable */
+        }}
+      >
+        Total Referral: {referralCount}
+      </button>
+    )}
           {/* <div className="container">
             <p>You slept on my Dad, don't sleep on me.</p>
             
@@ -221,15 +259,25 @@ function App() {
         
     
 
-        <div className="referal">
-          <div className="container">
-            {/* Display the Referral Link */}
-            <ReferralLinkComponent isConnected={isConnected} defaultAccount={defaultAccount} claimTokens={claimTokens} />
 
-          </div>
-        </div>
+
+        <div className="referal">
+  <div className="container">
+    {/* Display the Referral Link */}
+    <ReferralLinkComponent isConnected={isConnected} defaultAccount={defaultAccount} claimTokens={claimTokens} />
+
+  
+
+  </div>
+</div>
+
+
       </div>
+
+      
     </div>
+
+    
   );
 }
 

@@ -22,8 +22,12 @@ const ReferralLinkComponent = ({ isConnected, defaultAccount, claimTokens }) => 
       <div className="container">
         <input type="text" value={referralLink} placeholder="your referral link" readOnly />
         <button onClick={handleCopyButtonClick}>Copy</button>
+        
       </div>
+
+      
     </div>
+    
   );
 };
 
